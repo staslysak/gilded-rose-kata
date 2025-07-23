@@ -22,52 +22,51 @@ class Item {
     }
 
     increaseQuality() {
-        if (this.quality < 50) {
-            this.quality += 1;
-        }
+        this.quality = Math.min(this.quality + 1, 50);
     }
 
     decreaseQuality() {
-        if (this.quality > 0 && !this.isSulfuras) {
-            this.quality -= 1;
+        if (!this.isSulfuras) {
+            this.quality = Math.max(this.quality - 1, 0);
         }
     }
 
     decreaseSellIn() {
-        this.sell_in -= 1;
+        if (!this.isSulfuras) {
+            this.sell_in -= 1;
+        }
+    }
+
+    updateQuality() {
+        if (this.isAged) {
+            this.increaseQuality();
+        } else if (this.isBackstage) {
+            this.increaseQuality();
+            if (this.sell_in < 11) this.increaseQuality();
+            if (this.sell_in < 6) this.increaseQuality();
+        } else {
+            this.decreaseQuality();
+        }
+
+        this.decreaseSellIn();
+
+        if (this.sell_in < 0) {
+            if (this.isAged) {
+                this.increaseQuality();
+            } else if (this.isBackstage) {
+                this.resetQuality();
+            } else {
+                this.decreaseQuality();
+            }
+        }
     }
 }
 
-var items = [];
+const items = [];
 
 function update_quality() {
-    for (var i = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
         const item = items[i];
-
-        if (!item.isBackstage && !item.isAged) {
-            item.decreaseQuality();
-        } else {
-            item.increaseQuality();
-            if (item.isBackstage) {
-                if (item.sell_in < 11) item.increaseQuality();
-                if (item.sell_in < 6) item.increaseQuality();
-            }
-        }
-
-        if (!item.isSulfuras) {
-            item.decreaseSellIn();
-        }
-
-        if (item.sell_in < 0) {
-            if (!item.isAged) {
-                if (!item.isBackstage) {
-                    item.decreaseQuality();
-                } else {
-                    item.resetQuality();
-                }
-            } else {
-                item.increaseQuality();
-            }
-        }
+        item.updateQuality();
     }
 }
