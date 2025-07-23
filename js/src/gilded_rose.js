@@ -1,66 +1,70 @@
-class Item {
-    constructor(name, sell_in, quality) {
-        this.name = name;
-        this.sell_in = sell_in;
-        this.quality = quality;
-    }
+function Item(name, sell_in, quality) {
+    this.name = name;
+    this.sell_in = sell_in;
+    this.quality = quality;
+}
 
-    get isBackstage() {
+Object.defineProperty(Item.prototype, 'isBackstage', {
+    get() {
         return this.name === 'Backstage passes to a TAFKAL80ETC concert';
-    }
+    },
+});
 
-    get isAged() {
+Object.defineProperty(Item.prototype, 'isAged', {
+    get() {
         return this.name === 'Aged Brie';
-    }
+    },
+});
 
-    get isSulfuras() {
+Object.defineProperty(Item.prototype, 'isSulfuras', {
+    get() {
         return this.name === 'Sulfuras, Hand of Ragnaros';
+    },
+});
+
+Item.prototype.resetQuality = function () {
+    this.quality = 0;
+};
+
+Item.prototype.increaseQuality = function () {
+    this.quality = Math.min(this.quality + 1, 50);
+};
+
+Item.prototype.decreaseQuality = function () {
+    if (!this.isSulfuras) {
+        this.quality = Math.max(this.quality - 1, 0);
+    }
+};
+
+Item.prototype.decreaseSellIn = function () {
+    if (!this.isSulfuras) {
+        this.sell_in -= 1;
+    }
+};
+
+Item.prototype.updateQuality = function () {
+    if (this.isAged) {
+        this.increaseQuality();
+    } else if (this.isBackstage) {
+        this.increaseQuality();
+        if (this.sell_in < 11) this.increaseQuality();
+        if (this.sell_in < 6) this.increaseQuality();
+    } else {
+        this.decreaseQuality();
     }
 
-    resetQuality() {
-        this.quality = 0;
-    }
+    this.decreaseSellIn();
 
-    increaseQuality() {
-        this.quality = Math.min(this.quality + 1, 50);
-    }
-
-    decreaseQuality() {
-        if (!this.isSulfuras) {
-            this.quality = Math.max(this.quality - 1, 0);
-        }
-    }
-
-    decreaseSellIn() {
-        if (!this.isSulfuras) {
-            this.sell_in -= 1;
-        }
-    }
-
-    updateQuality() {
+    if (this.sell_in < 0) {
         if (this.isAged) {
             this.increaseQuality();
         } else if (this.isBackstage) {
-            this.increaseQuality();
-            if (this.sell_in < 11) this.increaseQuality();
-            if (this.sell_in < 6) this.increaseQuality();
+            this.resetQuality();
         } else {
             this.decreaseQuality();
         }
-
-        this.decreaseSellIn();
-
-        if (this.sell_in < 0) {
-            if (this.isAged) {
-                this.increaseQuality();
-            } else if (this.isBackstage) {
-                this.resetQuality();
-            } else {
-                this.decreaseQuality();
-            }
-        }
     }
-}
+};
 
 const items = [];
 
