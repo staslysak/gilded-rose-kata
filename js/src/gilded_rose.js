@@ -45,7 +45,7 @@ function update_quality() {
         const item = items[i];
 
         if (!item.isBackstage && !item.isAged) {
-            this.decreaseQuality();
+            item.decreaseQuality();
         } else {
             item.increaseQuality();
             if (item.isBackstage) {
