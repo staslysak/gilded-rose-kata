@@ -1,3 +1,4 @@
+
 function Item(name, sell_in, quality) {
     this.name = name;
     this.sell_in = sell_in;
@@ -14,22 +15,22 @@ class ItemWrapper {
     }
 
     increaseQuality() {
-        this.quality = Math.min(this.quality + 1, 50);
+        this.item.quality = Math.min(this.item.quality + 1, 50);
     }
 
     decreaseQuality() {
-        this.quality = Math.max(this.quality - 1, 0);
+        this.item.quality = Math.max(this.item.quality - 1, 0);
     }
 
     decreaseSellIn() {
-        this.sell_in -= 1;
+        this.item.sell_in -= 1;
     }
 
     updateQuality() {
         this.decreaseQuality();
         this.decreaseSellIn();
 
-        if (this.sell_in < 0) {
+        if (this.item.sell_in < 0) {
             this.decreaseQuality();
         }
     }
@@ -43,7 +44,7 @@ class AgedBrieItem extends ItemWrapper {
     updateQuality() {
         this.increaseQuality();
         this.decreaseSellIn();
-        if (this.sell_in < 0) {
+        if (this.item.sell_in < 0) {
             this.increaseQuality();
         }
     }
@@ -56,11 +57,11 @@ class BackstageItem extends ItemWrapper {
 
     updateQuality() {
         this.increaseQuality();
-        if (this.sell_in < 11) this.increaseQuality();
-        if (this.sell_in < 6) this.increaseQuality();
+        if (this.item.sell_in < 11) this.increaseQuality();
+        if (this.item.sell_in < 6) this.increaseQuality();
         this.decreaseSellIn();
 
-        if (this.sell_in < 0) {
+        if (this.item.sell_in < 0) {
             this.resetQuality();
         }
     }
